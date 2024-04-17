@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seecrlicense"
+authors = [
+    {name = "Thijs Janssen", email = "thijs@seecr.nl"},
+    {name = "Johan Jonkers", email = "johan@seecr.nl"},
+]
+description = "Apply a license to your project"
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = ["seecr", "license"]
+license = {file = "LICENSE"}
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "pytest",
+]
+dynamic = ["version"]
+
+# [project.scripts]
+# seecr-repoview-server = "repoview.main:main_app"
+
+[tool.setuptools.dynamic]
+version = {attr = "seecrlicense.__version__.VERSION"}
+
+[tool.setuptools.packages.find]
+where = ["."]
