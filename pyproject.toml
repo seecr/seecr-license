@@ -22,11 +22,14 @@ dependencies = [
 ]
 dynamic = ["version"]
 
-# [project.scripts]
-# seecr-repoview-server = "repoview.main:main_app"
+[project.scripts]
+seecr-license = "seecrlicense.app:main"
 
 [tool.setuptools.dynamic]
 version = {attr = "seecrlicense.__version__.VERSION"}
+
+[tool.setuptools]
+include_package_data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
