@@ -32,6 +32,7 @@ from .copyrightset import CopyrightSet
 
 HASH_MARKERS = ('## begin license ##', '## end license ##', '# ')
 C_MARKERS = ('/* begin license *', ' * end license */', ' * ')
+J2_MARKERS = ('{# begin license ##', '## end license #}', '# ')
 markersByExtension = {
     '.c': C_MARKERS,
     '.cpp': C_MARKERS,
@@ -46,6 +47,7 @@ markersByExtension = {
     '.rules': HASH_MARKERS,
     '.sf': HASH_MARKERS,
     '.sh': HASH_MARKERS,
+    '.j2': J2_MARKERS,
 }
 markersByFilename = {
     'Makefile': HASH_MARKERS

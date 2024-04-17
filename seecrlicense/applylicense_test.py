@@ -170,6 +170,33 @@ def test_apply_gplv2(tmp_path):
     assert "2034" in result
     assert "GNU General Public License" in result
 
+def test_jinja2(tmp_path):
+    applyLicense = ApplyLicense(ApplyLicense.Config({
+        'project': 'Some Project',
+        'description': 'This is just a dummy project for testing purposes.',
+        'license': 'arr',
+        'copyrights': {'seecr': {'name': 'Seecr', 'url': 'https://seecr.nl'}}
+    }), year="2024", changedOnly=False)
+
+    sourceFile = tmp_path / 'source.j2'
+    sourceFile.write_text("{{ 'hello' }}")
+
+    applyLicense.run([sourceFile])
+
+    assert sourceFile.read_text() == """\
+{# begin license ##
+#
+# This is just a dummy project for testing purposes.
+#
+# All rights reserved.
+#
+# Copyright (C) 2024 Seecr https://seecr.nl
+#
+# This file is part of "Some Project"
+#
+## end license #}
+
+{{ 'hello' }}"""
 
 def test_php(tmp_path):
     applyLicense = ApplyLicense(ApplyLicense.Config({
