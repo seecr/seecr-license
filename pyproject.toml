@@ -3,7 +3,7 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "seecrlicense"
+name = "seecr-license"
 authors = [
     {name = "Thijs Janssen", email = "thijs@seecr.nl"},
     {name = "Johan Jonkers", email = "johan@seecr.nl"},
@@ -21,6 +21,9 @@ dependencies = [
     "pytest",
 ]
 dynamic = ["version"]
+
+[project.urls]
+homepage = "https://github.com/seecr/seecr-license"
 
 [project.scripts]
 seecr-license = "seecrlicense.app:main"
