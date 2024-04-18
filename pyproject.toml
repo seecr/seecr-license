@@ -29,7 +29,7 @@ seecr-license = "seecrlicense.app:main"
 version = {attr = "seecrlicense.__version__.VERSION"}
 
 [tool.setuptools]
-include_package_data = true
+include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
