@@ -31,51 +31,54 @@ class CopyrightSet(object):
     def _mergeEquallyNamed(self, copyrightDictList):
         self._copyrights = {}
         for c in copyrightDictList:
-            matchC = self._copyrights.get(c['name'])
+            matchC = self._copyrights.get(c["name"])
             if matchC is None:
-                self._copyrights[c['name']] = cCopy = c.copy()
-                cCopy['years'] = set(c['years'])
+                self._copyrights[c["name"]] = cCopy = c.copy()
+                cCopy["years"] = set(c["years"])
             else:
-                if max(c['years']) >= max(matchC['years']):
-                    matchC['url'] = c['url']
-                    if 'text' in c:
-                        matchC['text'] = c['text']
-                    elif 'text' in matchC:
-                        del matchC['text']
-                matchC['years'].update(c['years'])
+                if max(c["years"]) >= max(matchC["years"]):
+                    matchC["url"] = c["url"]
+                    if "text" in c:
+                        matchC["text"] = c["text"]
+                    elif "text" in matchC:
+                        del matchC["text"]
+                matchC["years"].update(c["years"])
 
     def asCopyrightLines(self):
         s = StringIO()
-        for copyright in sorted(list(self._copyrights.values()), key=lambda c: (min(c['years']), c['name'])):
-            name = copyright['name']
-            url = copyright['url']
-            yearString = _serializeYears(copyright['years'])
+        for copyright in sorted(
+            list(self._copyrights.values()), key=lambda c: (min(c["years"]), c["name"])
+        ):
+            name = copyright["name"]
+            url = copyright["url"]
+            yearString = _serializeYears(copyright["years"])
             s.write(copyrightLineTemplate % locals())
-            if copyright.get('text'):
-                s.write(_textWrapper.fill(copyright['text']) + '\n')
+            if copyright.get("text"):
+                s.write(_textWrapper.fill(copyright["text"]) + "\n")
         return s.getvalue()
 
     def merge(self, other):
-        return CopyrightSet(list(self._copyrights.values()) + list(other._copyrights.values()))
+        return CopyrightSet(
+            list(self._copyrights.values()) + list(other._copyrights.values())
+        )
 
     def __str__(self):
         return self.asCopyrightLines()
 
     def __eq__(self, other):
-        return other.__class__ is self.__class__ and \
-            self._copyrights == other._copyrights
+        return (
+            other.__class__ is self.__class__ and self._copyrights == other._copyrights
+        )
+
 
 def _serializeYears(years):
-    intervals=[]
+    intervals = []
     for year in sorted(years):
-        if len(intervals) == 0 or year > intervals[-1]['end'] + 1:
-            intervals.append({'start': year})
-        intervals[-1]['end'] = year
-    return ', '.join(
-        '-'.join(
-            str(y)
-            for y in sorted(set(interval.values()))
-        )
+        if len(intervals) == 0 or year > intervals[-1]["end"] + 1:
+            intervals.append({"start": year})
+        intervals[-1]["end"] = year
+    return ", ".join(
+        "-".join(str(y) for y in sorted(set(interval.values())))
         for interval in intervals
     )
 
@@ -83,5 +86,4 @@ def _serializeYears(years):
 copyrightLineTemplate = "\
 Copyright (C) %(yearString)s %(name)s %(url)s\n"
 
-_textWrapper = TextWrapper(width=79, initial_indent=4 * ' ', subsequent_indent=4 * ' ')
-
+_textWrapper = TextWrapper(width=79, initial_indent=4 * " ", subsequent_indent=4 * " ")

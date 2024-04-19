@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ## begin license ##
 #
 # Copyright (C) 2011-2012, 2014, 2020, 2023-2024 Seecr (Seek You Too B.V.) https://seecr.nl
@@ -21,8 +20,9 @@
 #
 ## end license ##
 
-BEGIN_LICENSE_TEXT = '%s begin license %s\n'
-END_LICENSE_TEXT = '%s end license %s\n'
+BEGIN_LICENSE_TEXT = "%s begin license %s\n"
+END_LICENSE_TEXT = "%s end license %s\n"
+
 
 class License(object):
     def __init__(self, template, project=None, description=None):
@@ -37,12 +37,11 @@ class License(object):
 
     def fill(self, copyrightLines):
         substitutionDict = dict(
-            (key, value or '')
+            (key, value or "")
             for key, value in [
-                ('project', self._project),
-                ('description', self._description),
-                ('copyrightlines', copyrightLines)
+                ("project", self._project),
+                ("description", self._description),
+                ("copyrightlines", copyrightLines),
             ]
         )
         return "\n%s\n" % (self._template % substitutionDict).strip("\n")
-

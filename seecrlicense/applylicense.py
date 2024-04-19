@@ -32,16 +32,19 @@ import json
 import pathlib
 import importlib.resources as resources
 
-license_path = resources.files('seecrlicense')/'license-data'
+license_path = resources.files("seecrlicense") / "license-data"
 
-licenses = {f.stem:f for f in license_path.glob('*.header')}
+licenses = {f.stem: f for f in license_path.glob("*.header")}
 
-IGNORED_DIRECTORIES = ['.git', '.svn', 'deps.d', '__pycache__']
+IGNORED_DIRECTORIES = [".git", ".svn", "deps.d", "__pycache__"]
 
-currentYear = strftime('%Y', localtime())
+currentYear = strftime("%Y", localtime())
+
 
 class ApplyLicense:
-    def __init__(self, config, forceUpdate=False, changedOnly=True, dryRun=False, **kwargs):
+    def __init__(
+        self, config, forceUpdate=False, changedOnly=True, dryRun=False, **kwargs
+    ):
         self.license = config.license
         self.configuredCopyrights = config.copyrightSet(**kwargs)
         self._forceUpdate = forceUpdate
@@ -50,12 +53,16 @@ class ApplyLicense:
 
     @classmethod
     def fromFile(cls, configPath, **kwargs):
-        return cls(cls.Config(json.loads(pathlib.Path(configPath).read_text())), **kwargs)
+        return cls(
+            cls.Config(json.loads(pathlib.Path(configPath).read_text())), **kwargs
+        )
 
     def run(self, paths):
         if self._changedOnly is True:
             changes = git_status(fullPath=True)
-            paths = [p for status, paths in changes.items() if 'M' in status for p in paths]
+            paths = [
+                p for status, paths in changes.items() if "M" in status for p in paths
+            ]
 
         for path in paths:
             if isfile(path):
@@ -71,33 +78,42 @@ class ApplyLicense:
                         continue
 
                     for file in files:
-                        if file.startswith('.') and file.endswith('.swp'):
+                        if file.startswith(".") and file.endswith(".swp"):
                             continue
                         try:
                             self._maybeUpdateLicense(join(curdir, file))
                         except UnrecognizedFileType:
                             continue
             else:
-                print("Skipped '%s', it can not be recognized as either a file or a directory." % path)
-
+                print(
+                    "Skipped '%s', it can not be recognized as either a file or a directory."
+                    % path
+                )
 
     def _maybeUpdateLicense(self, filepath):
         sf = SourceFile(filepath)
         print("Examining %s" % filepath)
-        sf.maybeUpdateLicense(self.license, self.configuredCopyrights, forceUpdate=self._forceUpdate, dryRun=self._dryRun)
-
-
+        sf.maybeUpdateLicense(
+            self.license,
+            self.configuredCopyrights,
+            forceUpdate=self._forceUpdate,
+            dryRun=self._dryRun,
+        )
 
     class Config:
         def __init__(self, configDict):
-            license_path = _getLicenseFile(configDict['license'])
-            self.license = License.fromFile(license_path, project=configDict.get('project'), description=configDict.get('description'))
+            license_path = _getLicenseFile(configDict["license"])
+            self.license = License.fromFile(
+                license_path,
+                project=configDict.get("project"),
+                description=configDict.get("description"),
+            )
             self._copyrightsSelected = []
             self._copyrights = {}
-            copyrights = configDict['copyrights']
+            copyrights = configDict["copyrights"]
             if isinstance(copyrights, list):
-                for copyrightset in configDict['copyrights']:
-                    copyrightset.pop('years', None)
+                for copyrightset in configDict["copyrights"]:
+                    copyrightset.pop("years", None)
                     self._copyrightsSelected.append(copyrightset)
             else:
                 self._copyrights.update(copyrights)
@@ -106,19 +122,24 @@ class ApplyLicense:
             year = int(year or currentYear)
             selected = self._copyrightsSelected[:]
             if not selected:
-                for key in (["seecr"] if select is None else [s.strip() for s in select.split(',') if s.strip()]):
+                for key in (
+                    ["seecr"]
+                    if select is None
+                    else [s.strip() for s in select.split(",") if s.strip()]
+                ):
                     selected.append(self._copyrights[key])
             if not selected:
-                raise ValueError('No copyrights configured')
+                raise ValueError("No copyrights configured")
             return CopyrightSet([dict(c, years=[year]) for c in selected])
 
 
 def _getLicenseFile(licenseType):
     license_path = licenses.get(licenseType)
     if license_path:
-        print(f'Using license {licenseType}')
+        print(f"Using license {licenseType}")
         return license_path
     raise KeyError("No such license: %s" % licenseType)
 
+
 def should_skip_dir(curdir, files):
-    return basename(curdir) in IGNORED_DIRECTORIES or 'pyvenv.cfg' in files
+    return basename(curdir) in IGNORED_DIRECTORIES or "pyvenv.cfg" in files
